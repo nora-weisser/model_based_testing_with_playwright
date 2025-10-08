@@ -1,0 +1,28 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+  <body>
+    <form id="login-form">
+      <input id="email" placeholder="Email" />
+      <input id="password" placeholder="Password" type="password" />
+      <button type="submit">Login</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+      const form = document.getElementById('login-form');
+      const message = document.getElementById('message');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        if (email === 'user@example.com' && password === 'password') {
+          message.textContent = 'Welcome!';
+        } else {
+          message.textContent = 'Invalid credentials.';
+        }
+      });
+    </script>
+  </body>
+</html>

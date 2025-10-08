@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@playwright/test": "^1.55.0",
+    "@xstate/test": "^0.5.1",
+    "xstate": "^4.38.3"
+  }
+}
