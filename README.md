@@ -12,7 +12,7 @@ This project demonstrates model-based testing using XState for state machines an
 
 <img src="state_machine.png" alt="State Machine">
 
-1. Playwright Tests (`login.spec.ts`): A set of model-based tests that simulate user interactions using Playwright to test different paths in the login process. It verifies that the form behaves correctly based on the user's input and ensures that all possible paths are covered.
+3. Playwright Tests (`login.spec.ts`): A set of model-based tests that simulate user interactions using Playwright to test different paths in the login process. It verifies that the form behaves correctly based on the user's input and ensures that all possible paths are covered.
 
 ## Project Setup
 
