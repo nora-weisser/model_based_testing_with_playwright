@@ -4,19 +4,23 @@ import { loginMachine } from './loginMachine';
 
 type TestContext = { page: Page };
 
+async function fillForm(context: TestContext, email: string, password: string) {
+  const { page } = context;
+  await page.locator('#email').fill(email);
+  await page.locator('#password').fill(password);
+}
+
 const testModel = createModel(loginMachine).withEvents({
   FILL_FORM: async (context: unknown) => {
     const { page } = context as TestContext;  
-    await page.locator('#email').fill('user@example.com');
-    await page.locator('#password').fill('password');
+    await fillForm({ page }, 'user@example.com', 'password');
   },
   FILL_FORM_INVALID: async (context: unknown) => {
     const { page } = context as TestContext;  
-    await page.locator('#email').fill('wrong@example.com');
-    await page.locator('#password').fill('wrongpass');
+    await fillForm({ page }, 'wrong@example.com', 'wrongpass');
   },
   SUBMIT: async (context: unknown) => {
-    const { page } = context as TestContext;  
+    const { page } = context as TestContext; 
     await page.getByRole('button', { name: 'Login' }).click();
   }
 });
