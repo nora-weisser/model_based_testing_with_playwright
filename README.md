@@ -1,43 +1,58 @@
-# Model-Based Testing Demo With Playwright for Login Flow
+# Model-Based Testing with Playwright
 
-## Summary
+Instead of writing each test by hand, describe how the app behaves as a state machine and let the tests be generated from it. This repo shows the idea on a login form, using [XState](https://xstate.js.org/) for the model and [Playwright](https://playwright.dev/) to drive the browser.
 
-This project demonstrates model-based testing using XState for state machines and Playwright for browser automation. The login form functionality is tested with various scenarios like valid and invalid form submissions.
+## Why model-based testing
 
-## Overview
+Hand-written tests cover the paths someone thought of. A model covers every path through the states you defined: add a state or transition, and the new paths get tested automatically. A final coverage check fails if any state is never reached, so gaps show up as failures, not as silence.
 
-1. HTML (`index.html`): A simple login form with an email, password input, and a submit button. When the form is submitted, it checks if the credentials match the predefined valid ones and displays a corresponding message ('Welcome!' or 'Invalid credentials.').
+## How it works
 
-2. XState State Machine (`loginMachine.ts`): Defines the state machine for the login form. It includes states for idle, formFilledValid, formFilledInvalid, success, and failure. Each state transition is triggered by specific events like FILL_FORM, FILL_FORM_INVALID, and SUBMIT.
+**1. The app** — `index.html` is a login form. Valid credentials show "Welcome!", anything else shows "Invalid credentials."
 
-<img src="state_machine.png" alt="State Machine">
+**2. The model** — `loginMachine.ts` describes the form as a state machine:
 
-3. Playwright Tests (`login.spec.ts`): A set of model-based tests that simulate user interactions using Playwright to test different paths in the login process. It verifies that the form behaves correctly based on the user's input and ensures that all possible paths are covered.
+<img src="state_machine.png" alt="Login state machine: idle, formFilledValid, formFilledInvalid, success, failure" width="600">
 
-## Project Setup
+| State | Reached by |
+| --- | --- |
+| `idle` | page load |
+| `formFilledValid` | `FILL_FORM` with valid credentials |
+| `formFilledInvalid` | `FILL_FORM_INVALID` with wrong credentials |
+| `success` | `SUBMIT` from `formFilledValid` |
+| `failure` | `SUBMIT` from `formFilledInvalid` |
 
-### Clone the repository:
-```
-git clone git@github.com:nora-weisser/model_based_testing_with_playwright.git
+Each state also says how to *check* it in the browser, for example that the welcome message is visible in `success`.
+
+**3. The tests** — `login.spec.ts` links each model event to a Playwright action (fill the form, click **Login**), then asks `@xstate/test` for the shortest path to every state. Each path becomes its own Playwright test, and a last test calls `testCoverage()` to confirm every state was visited.
+
+## Run it
+
+Requires Node.js.
+
+```bash
+git clone https://github.com/nora-weisser/model_based_testing_with_playwright.git
 cd model_based_testing_with_playwright
-```
-
-### Install dependencies:
-```
 npm install
+npx playwright install
 ```
 
-### Starting the local server:
-Make sure your application is running locally at http://localhost:3000. You can serve the index.html file using any static file server.
+Serve the app on port 3000 in one terminal:
 
-Example (using http-server):
-```
+```bash
 npx http-server -p 3000
 ```
-This will start the server at http://localhost:3000, where the tests will be executed.
 
-### Run the tests:
+Run the generated tests in another:
 
-```
+```bash
 npx playwright test
 ```
+
+## Tech stack
+
+TypeScript · Playwright · XState · @xstate/test
+
+## Read more
+
+- [Model-Based Testing with Playwright](https://noraweisser.com/2025/10/27/model-based-testing-with-playwright/) — the blog post this repo accompanies
